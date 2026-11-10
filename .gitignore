@@ -1,4 +1,5 @@
-node_modules
+node_modules/
+dist/
+.progress.json
 .DS_Store
-npm-debug.log
-TODO.md
+coverage/
