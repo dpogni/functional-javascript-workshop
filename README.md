@@ -1,8 +1,8 @@
 # React Interview Workshop
 
 A guided path through the ten problems that keep showing up in React
-live-coding interviews. You write the code in your editor, run one command, and
-get a **PASS / FAIL** grade from an automated test suite.
+live-coding interviews. Write your solution, in the browser or in your own
+editor, and get a **PASS / FAIL** grade from an automated test suite.
 
 The ten interview problems are marked ★. Between them are **14 short warm-up
 exercises** that each introduce *one* new idea, so that by the time you reach a
@@ -72,7 +72,40 @@ feels like too big a jump.
 | 23 | [Form validation: login form](exercises/23-form-validation/README.md) | Intermediate | Validation, touched fields & submit | `LoginForm.jsx` |
 | 24 | ★ [Multi-step signup form with useReducer](exercises/24-signup-wizard/README.md) | Advanced | State machines & forms | `SignupWizard.jsx` |
 
-## Setup
+## Two ways to do the workshop
+
+Both use the same briefs and the same tests, so a solution that passes in one
+passes in the other.
+
+### A. In the browser (LeetCode-style)
+
+```bash
+npm install
+npm run dev          # then open http://localhost:5173
+```
+
+One page with everything:
+
+- **Left:** the exercise list, grouped by stage, with ✓ / ✗ for each.
+- **Middle:** the brief.
+- **Right:** a code editor, and below it **Test results** and a live **Preview**
+  of your component.
+
+Press **▶ Run tests** (or `Ctrl`/`⌘` + `Enter`) to grade. You get **Accepted** or
+**Wrong Answer**, with every requirement listed as ✓/✗ and the reason for each
+failure. **Reset** restores the starter code; **Solution** shows the reference
+answer.
+
+Your code and scoreboard are saved in that browser's `localStorage`, separately
+from the files in `exercises/`. Nothing leaves your machine: the code is
+compiled and tested inside the page.
+
+`npm run build` produces a fully static site in `dist/` that can be hosted
+anywhere. `.github/workflows/pages.yml` publishes it to GitHub Pages once this
+is on the default branch and Pages is set to "GitHub Actions" in the repo
+settings.
+
+### B. In VS Code + terminal
 
 Requires Node 20+.
 
@@ -81,11 +114,9 @@ npm install
 npm run progress
 ```
 
-## The loop
-
 1. **Read** the brief: `exercises/NN-name/README.md`. It is the spec, so the exact
    button text, labels and props it asks for matter.
-2. **Code** the starter file in the same folder, in VS Code.
+2. **Code** the starter file in the same folder.
 3. **Grade** it:
 
    ```bash
@@ -104,16 +135,15 @@ npm run progress
    npm run progress
    ```
 
-### Other commands
-
 | Command | What it does |
 |---------|--------------|
 | `npm run check all` | Grade every exercise |
 | `npm run watch 3` | Re-grade exercise 3 every time you save |
-| `npm run dev` | Browser playground that renders *your* components, so you can click around |
 | `npm run verify-solutions` | Run the grader against the reference solutions (proves the tests are fair) |
 
 To start an exercise over: `git checkout -- exercises/03-list-state`.
+While `npm run dev` is running, `http://localhost:5173/playground/` renders the
+components from your `exercises/` files so you can click around.
 
 ## Interview-style practice tips
 
@@ -125,22 +155,30 @@ To start an exercise over: `git checkout -- exercises/03-list-state`.
   written as requirements. Treat `tests/` as the hidden grader, and only open it
   if you're truly stuck.
 - Each brief has a collapsed **Hint**. Try without it first.
-- Your scoreboard is stored in `.progress.json` (git-ignored).
+- The terminal scoreboard is stored in `.progress.json` (git-ignored); the
+  browser scoreboard in `localStorage`.
 
 ## Layout
 
 ```
-exercises/   ← your workspace: briefs + starter code (edit these)
-tests/       ← the grader (Vitest + React Testing Library)
+exercises/   ← briefs + starter code (edit these in terminal mode)
+tests/       ← the grader, shared by both modes
 solutions/   ← reference solutions. ⚠️ Spoilers! Look only after you pass or give up.
-playground/  ← `npm run dev` browser sandbox
-scripts/     ← the workshop CLI
+web/         ← the browser workshop (UI, in-browser compiler and test runner)
+playground/  ← renders your local exercises/ files (terminal mode)
+scripts/     ← the terminal CLI
 ```
 
 ## Under the hood
 
-- **Vitest** + **jsdom** + **React Testing Library** + **user-event**.
+- Terminal mode: **Vitest** + **jsdom** + **React Testing Library** + **user-event**.
+- Browser mode: the editor code is compiled with **Sucrase** and the same test
+  files run in a throw-away `<iframe>` against the real DOM, using a small
+  harness (`web/runner/harness.js`) that provides Vitest's `describe` / `test` /
+  `expect` / `vi` on top of `@vitest/expect`, `@vitest/spy` and
+  `@sinonjs/fake-timers`.
 - Timer exercises (14–18) use fake timers, so they run instantly and
   also check that you **clean up**: no leaked or stacked timers.
-- Tests import your code through the `@ex` alias (see `vite.config.js`), which
-  `verify-solutions` points at `solutions/` instead.
+- Tests import the code under test through the `@ex` alias (see
+  `vite.config.js`): your files in terminal mode, the editor contents in the
+  browser, and `solutions/` for `verify-solutions`.

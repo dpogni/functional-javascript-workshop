@@ -71,7 +71,7 @@ ${bold('React interview workshop')}
   npm run check <n>       grade exercise n (e.g. npm run check 3)
   npm run check all       grade every exercise
   npm run watch <n>       re-grade exercise n on every save
-  npm run dev             open the browser playground
+  npm run dev             run the whole workshop in your browser (editor + grader)
 `);
 }
 
