@@ -3,15 +3,64 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import Counter from '../exercises/01-counter/Counter.jsx';
-import { ThemeProvider, ThemeToggle, useTheme } from '../exercises/02-theme-toggle/theme.jsx';
-import usePrevious from '../exercises/03-use-previous/usePrevious.js';
-import TodoList from '../exercises/04-memo-list/TodoList.jsx';
-import TrafficLight from '../exercises/05-traffic-light/TrafficLight.jsx';
-import useDebounce from '../exercises/06-use-debounce/useDebounce.js';
-import OtpInput from '../exercises/07-otp-input/OtpInput.jsx';
-import AutoCounter from '../exercises/08-stale-closure/AutoCounter.jsx';
-import useInterval from '../exercises/09-use-interval/useInterval.js';
-import SignupWizard from '../exercises/10-signup-wizard/SignupWizard.jsx';
+import Greeting from '../exercises/02-controlled-input/Greeting.jsx';
+import ShoppingList from '../exercises/03-list-state/ShoppingList.jsx';
+import Accordion from '../exercises/04-lifting-state/Accordion.jsx';
+import { UserProvider, UserBadge } from '../exercises/05-context-basics/user.jsx';
+import ProductSearch from '../exercises/06-use-memo/ProductSearch.jsx';
+import NoteEditor from '../exercises/07-memo-callback/NoteEditor.jsx';
+import { ThemeProvider, ThemeToggle, useTheme } from '../exercises/08-theme-toggle/theme.jsx';
+import SearchBox from '../exercises/09-ref-focus/SearchBox.jsx';
+import useToggle from '../exercises/10-use-toggle/useToggle.js';
+import useDocumentTitle from '../exercises/11-effect-basics/useDocumentTitle.js';
+import usePrevious from '../exercises/12-use-previous/usePrevious.js';
+import TodoList from '../exercises/13-memo-list/TodoList.jsx';
+import SaveButton from '../exercises/14-timeout-cleanup/SaveButton.jsx';
+import AutoCounter from '../exercises/15-stale-closure/AutoCounter.jsx';
+import TrafficLight from '../exercises/16-traffic-light/TrafficLight.jsx';
+import useDebounce from '../exercises/17-use-debounce/useDebounce.js';
+import useInterval from '../exercises/18-use-interval/useInterval.js';
+import TagInput from '../exercises/19-tag-input/TagInput.jsx';
+import Tabs from '../exercises/20-tabs-keyboard/Tabs.jsx';
+import OtpInput from '../exercises/21-otp-input/OtpInput.jsx';
+import Cart from '../exercises/22-reducer-basics/Cart.jsx';
+import LoginForm from '../exercises/23-form-validation/LoginForm.jsx';
+import SignupWizard from '../exercises/24-signup-wizard/SignupWizard.jsx';
+
+function UserDemo() {
+  const [signedIn, setSignedIn] = useState(true);
+  return (
+    <UserProvider user={signedIn ? { name: 'Ada' } : null}>
+      <button onClick={() => setSignedIn((s) => !s)}>{signedIn ? 'Sign out' : 'Sign in'}</button>
+      <header>
+        <nav>
+          <UserBadge />
+        </nav>
+      </header>
+    </UserProvider>
+  );
+}
+
+function ToggleDemo() {
+  const { on, toggle, setOn, setOff } = useToggle();
+  return (
+    <div>
+      <p>The light is {on ? 'ON 💡' : 'off'}</p>
+      <button onClick={toggle}>toggle</button> <button onClick={setOn}>setOn</button>{' '}
+      <button onClick={setOff}>setOff</button>
+    </div>
+  );
+}
+
+function TitleDemo() {
+  const [title, setTitle] = useState('Hello from exercise 11');
+  useDocumentTitle(title);
+  return (
+    <label>
+      Tab title <input value={title} onChange={(e) => setTitle(e.target.value)} />
+    </label>
+  );
+}
 
 function ThemeDemo() {
   function Panel() {
@@ -68,25 +117,51 @@ function IntervalDemo() {
   );
 }
 
+const FAQ = [
+  { id: 'a', title: 'What is React?', content: 'A UI library.' },
+  { id: 'b', title: 'What is JSX?', content: 'Syntax sugar for createElement.' },
+  { id: 'c', title: 'What is a hook?', content: 'A function that taps into React features.' },
+];
+const TODOS = [
+  { id: 1, text: 'Write tests', done: false },
+  { id: 2, text: 'Ship it', done: false },
+  { id: 3, text: 'Celebrate', done: true },
+];
+const TABS = [
+  { id: 'html', label: 'HTML', content: 'Structure of the page' },
+  { id: 'css', label: 'CSS', content: 'Style of the page' },
+  { id: 'js', label: 'JavaScript', content: 'Behaviour of the page' },
+];
+const PRODUCTS = [
+  { id: 'c', name: 'Coffee', price: 3.5 },
+  { id: 'b', name: 'Bagel', price: 2.25 },
+];
+
 const DEMOS = {
   '01 Counter': () => <Counter initialValue={0} />,
-  '02 Theme': ThemeDemo,
-  '03 usePrevious': PreviousDemo,
-  '04 Memo list': () => (
-    <TodoList
-      initialTodos={[
-        { id: 1, text: 'Write tests', done: false },
-        { id: 2, text: 'Ship it', done: false },
-        { id: 3, text: 'Celebrate', done: true },
-      ]}
-    />
-  ),
-  '05 Traffic light': () => <TrafficLight />,
-  '06 useDebounce': DebounceDemo,
-  '07 OTP input': () => <OtpInput onComplete={(code) => alert(`Complete: ${code}`)} />,
-  '08 Auto-counter': () => <AutoCounter />,
-  '09 useInterval': IntervalDemo,
-  '10 Signup wizard': () => <SignupWizard onSubmit={(v) => console.log('submitted', v)} />,
+  '02 Greeting': () => <Greeting />,
+  '03 Shopping list': () => <ShoppingList initialItems={['Milk', 'Eggs']} />,
+  '04 Accordion': () => <Accordion items={FAQ} />,
+  '05 User context': UserDemo,
+  '06 useMemo search': () => <ProductSearch products={['Apple', 'Apricot', 'Banana', 'Cherry']} />,
+  '07 Note editor': () => <NoteEditor />,
+  '08 Theme': ThemeDemo,
+  '09 Search box': () => <SearchBox />,
+  '10 useToggle': ToggleDemo,
+  '11 useDocumentTitle': TitleDemo,
+  '12 usePrevious': PreviousDemo,
+  '13 Memo list': () => <TodoList initialTodos={TODOS} />,
+  '14 Save button': () => <SaveButton />,
+  '15 Auto-counter': () => <AutoCounter />,
+  '16 Traffic light': () => <TrafficLight />,
+  '17 useDebounce': DebounceDemo,
+  '18 useInterval': IntervalDemo,
+  '19 Tag input': () => <TagInput initialTags={['react', 'hooks']} />,
+  '20 Tabs': () => <Tabs tabs={TABS} />,
+  '21 OTP input': () => <OtpInput onComplete={(code) => alert(`Complete: ${code}`)} />,
+  '22 Cart': () => <Cart products={PRODUCTS} />,
+  '23 Login form': () => <LoginForm onSubmit={(v) => alert(`Logged in as ${v.email}`)} />,
+  '24 Signup wizard': () => <SignupWizard onSubmit={(v) => console.log('submitted', v)} />,
 };
 
 function App() {

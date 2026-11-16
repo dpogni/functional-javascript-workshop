@@ -21,15 +21,28 @@ const exercises = readdirSync(join(ROOT, 'exercises'), { withFileTypes: true })
   .map((d) => d.name)
   .sort();
 
-const title = (name) => {
-  const readme = join(ROOT, 'exercises', name, 'README.md');
-  const first = readFileSync(readme, 'utf8').split('\n')[0];
-  return first.replace(/^#\s*\d+\s*·\s*/, '');
+const readme = (name) => readFileSync(join(ROOT, 'exercises', name, 'README.md'), 'utf8');
+const title = (name) => readme(name).split('\n')[0].replace(/^#\s*\d+\s*·\s*/, '');
+const stage = (name) => readme(name).match(/\*\*Stage:\*\*\s*(.+?)\s*·\s*\*\*Level/)?.[1] ?? '';
+const isInterview = (name) => readme(name).includes('★ Interview problem');
+
+// Exercises were renumbered when the bridge exercises were added.
+const RENAMED = {
+  '02-theme-toggle': '08-theme-toggle',
+  '03-use-previous': '12-use-previous',
+  '04-memo-list': '13-memo-list',
+  '05-traffic-light': '16-traffic-light',
+  '06-use-debounce': '17-use-debounce',
+  '07-otp-input': '21-otp-input',
+  '08-stale-closure': '15-stale-closure',
+  '09-use-interval': '18-use-interval',
+  '10-signup-wizard': '24-signup-wizard',
 };
 
 const loadProgress = () => {
   try {
-    return JSON.parse(readFileSync(PROGRESS_FILE, 'utf8'));
+    const raw = JSON.parse(readFileSync(PROGRESS_FILE, 'utf8'));
+    return Object.fromEntries(Object.entries(raw).map(([k, v]) => [RENAMED[k] ?? k, v]));
   } catch {
     return {};
   }
@@ -66,13 +79,20 @@ function progress() {
   const p = loadProgress();
   let passed = 0;
   console.log(`\n${bold('React interview workshop: progress')}\n`);
+  let currentStage = null;
   for (const ex of exercises) {
+    if (stage(ex) !== currentStage) {
+      currentStage = stage(ex);
+      console.log(`\n  ${bold(`Stage ${currentStage}`)}`);
+    }
     const r = p[ex];
     const icon = !r ? '⬜' : r.pass ? '✅' : '❌';
     if (r?.pass) passed++;
-    const detail = r ? dim(` ${r.passed}/${r.total} tests · ${new Date(r.at).toLocaleString()}`) : '';
-    console.log(`  ${icon}  ${ex.slice(0, 2)}  ${title(ex)}${detail}`);
+    const star = isInterview(ex) ? ' ★' : '';
+    const detail = r ? dim(`  ${r.passed}/${r.total} tests`) : '';
+    console.log(`  ${icon}  ${ex.slice(0, 2)}  ${title(ex)}${star}${detail}`);
   }
+  console.log(dim('\n  ★ = one of the 10 interview problems; the rest are warm-ups that lead up to them'));
   console.log(`\n  ${bold(`${passed}/${exercises.length} passed`)}`);
   const next = exercises.find((e) => !p[e]?.pass);
   if (next) {

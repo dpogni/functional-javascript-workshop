@@ -1,6 +1,8 @@
 # 01 · Counter with reset
 
-**Level:** Beginner · **Topic:** Hooks & state · **File:** `Counter.jsx`
+**Stage:** 1 · State & props · **Level:** Beginner · **Topic:** Hooks & state · **File:** `Counter.jsx` · ★ Interview problem
+
+**Start here.** No prior exercises needed: just `useState`.
 
 The classic warm-up. Interviewers use it to see whether you reach for
 *functional* state updates when the next value depends on the previous one.
