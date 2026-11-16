@@ -91,6 +91,10 @@ One page with everything:
 - **Right:** a code editor, and below it **Test results** and a live **Preview**
   of your component.
 
+The editor auto-imports like VS Code: type `useState`, pick it from the
+suggestion list with `Tab` or `Enter`, and `import { useState } from 'react'` is
+added at the top of the file (or merged into the import that is already there).
+
 Press **▶ Run tests** (or `Ctrl`/`⌘` + `Enter`) to grade. You get **Accepted** or
 **Wrong Answer**, with every requirement listed as ✓/✗ and the reason for each
 failure. **Reset** restores the starter code; **Solution** shows the reference

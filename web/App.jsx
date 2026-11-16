@@ -6,6 +6,7 @@ import { keymap } from '@codemirror/view';
 import { exercises, stages, byId } from './catalog.js';
 import { loadCode, saveCode, clearCode, loadProgress, saveProgress } from './storage.js';
 import { runTests, createSandboxFrame, connect } from './sandbox.js';
+import { autoImport } from './autoImport.js';
 
 const idFromHash = () => {
   const id = window.location.hash.replace(/^#\/?/, '');
@@ -272,6 +273,7 @@ export default function App() {
   const extensions = useMemo(
     () => [
       javascript({ jsx: true }),
+      autoImport(exercise.helpers),
       Prec.highest(
         keymap.of([
           {
@@ -284,7 +286,7 @@ export default function App() {
         ])
       ),
     ],
-    [run]
+    [run, exercise.helpers]
   );
 
   const helper = exercise.helpers.find((h) => h.name === fileTab);
