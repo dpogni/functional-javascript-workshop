@@ -36,3 +36,30 @@ const toggle = useCallback(() => setValue((v) => !v), []);
 ```
 Same pattern for `setOn` / `setOff`. Then `return { on, toggle, setOn, setOff }`.
 </details>
+
+<details><summary>Topics to read (official React docs)</summary>
+
+- [Reusing logic with custom hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)
+- [`useCallback` reference](https://react.dev/reference/react/useCallback)
+- [Queueing a series of state updates](https://react.dev/learn/queueing-a-series-of-state-updates)
+</details>
+
+<details><summary>Full explainer (spoilers)</summary>
+
+**The problem in one line:** package a small piece of stateful behaviour so any component can reuse it.
+
+**Key concepts**
+
+- **A custom hook is a function.** Its name starts with `use` and it calls other hooks. There is no other mechanism. The `use` prefix is what lets the linter apply the rules of hooks to it.
+- **Hooks share logic, not state.** Each call to `useToggle()` gets its own `useState` slot, tied to the component that called it. Two components using the hook do not affect each other.
+- **Design the return value as an API.** Callers get `{ on, toggle, setOn, setOff }` and never see the underlying setter. An object lets them pick what they need by name; an array (like `useState`) lets them rename freely. Either is fine if you are consistent.
+- **Stable functions are a courtesy.** A hook's caller may put `toggle` in an effect's dependency list or pass it to a memoized child. If the hook returned a new function on every render, that effect would re-run and that child would re-render every time. Wrapping in `useCallback` makes the hook safe to use anywhere.
+
+**How the solution works**
+
+`useState(initial)` holds the boolean. `toggle` uses an updater (`v => !v`), which is what makes two toggles in one batch cancel out, and what allows an empty dependency list. `setOn` and `setOff` set fixed values.
+
+**What an interviewer is looking for**
+
+Custom hooks come up as "extract this logic". They watch for the naming convention, a sensible return shape, and whether you think about callers: referential stability and independent state per call.
+</details>

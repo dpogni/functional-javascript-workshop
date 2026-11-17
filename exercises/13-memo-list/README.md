@@ -46,3 +46,40 @@ npm run check 13
 4. When toggling, return the *same object* for untouched todos so their props
    stay referentially equal.
 </details>
+
+<details><summary>Topics to read (official React docs)</summary>
+
+- [`memo` reference](https://react.dev/reference/react/memo)
+- [`useCallback` reference](https://react.dev/reference/react/useCallback)
+- [Updating arrays in state](https://react.dev/learn/updating-arrays-in-state)
+- [Render and commit](https://react.dev/learn/render-and-commit)
+- [Rendering lists (and why keys matter)](https://react.dev/learn/rendering-lists)
+</details>
+
+<details><summary>Full explainer (spoilers)</summary>
+
+**The problem in one line:** changing one thing re-renders every row of a list; make each row re-render only when its own data changes.
+
+**Why every row re-renders in the starter**
+
+1. `TodoRow` is not memoized, so it renders whenever `TodoList` does.
+2. Even if it were, `onToggle={() => toggle(todo.id)}` creates a new function per row per render, so that prop always looks changed.
+3. `toggle` itself is recreated on each render because it closes over `todos`.
+
+All three have to be fixed. Fixing one or two changes nothing, which is what makes this a good interview question.
+
+**Key concepts**
+
+- **`memo` compares props shallowly.** A row is skipped only if `todo` is the same object *and* `onToggle` is the same function as last time.
+- **Stable callback via `useCallback` + updater.** `useCallback((id) => setTodos(prev => prev.map(...)), [])` reads nothing from the render scope, so one function serves for the component's whole life. Writing `todos.map(...)` inside it with `[]` would be a stale closure: the second toggle would start again from the initial list.
+- **Pass the callback, do not wrap it.** The row receives `onToggle` and calls `onToggle(todo.id)` itself. The inline arrow moves into the memoized child, where it is harmless.
+- **Structural sharing.** `prev.map(t => t.id === id ? { ...t, done: !t.done } : t)` returns the *same object* for untouched todos. Their rows see an identical `todo` prop and are skipped. A deep clone of the list would re-render everything.
+
+**How the solution works**
+
+`TodoRow` is wrapped in `memo`. `toggle` is wrapped in `useCallback` with an updater and passed straight through. Clicking "Clicks" re-renders `TodoList`, but every row gets identical props: zero row renders. Toggling one todo replaces one object: exactly one row render.
+
+**What an interviewer is looking for**
+
+That you can list all the reasons a memoized child still re-renders, and that you would measure first (React DevTools Profiler) before optimising. Mention that the React Compiler can do this memoization automatically, and that for very long lists virtualization matters more.
+</details>

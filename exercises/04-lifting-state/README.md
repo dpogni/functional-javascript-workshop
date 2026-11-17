@@ -40,3 +40,31 @@ The parent needs a single piece of state: `openId` (or `null`).
 If you were tempted to give each item its own `useState(false)`, ask: how
 would item A know that item B was just opened?
 </details>
+
+<details><summary>Topics to read (official React docs)</summary>
+
+- [Sharing state between components](https://react.dev/learn/sharing-state-between-components)
+- [Passing props to a component](https://react.dev/learn/passing-props-to-a-component)
+- [Conditional rendering](https://react.dev/learn/conditional-rendering)
+- [Responding to events](https://react.dev/learn/responding-to-events)
+</details>
+
+<details><summary>Full explainer (spoilers)</summary>
+
+**The problem in one line:** several components must agree on one fact ("which panel is open"), so that fact has to live in their common parent.
+
+**Key concepts**
+
+- **Single source of truth.** If each panel had its own `isOpen` state, opening B could not close A: components cannot read each other's state. Move the state to the closest common ancestor and pass it down.
+- **Controlled vs uncontrolled components.** `AccordionItem` is *controlled*: it shows what the `isOpen` prop says and reports clicks through `onToggle`. It makes no decisions. That is why the grader checks that it stays closed when the parent keeps passing `false`.
+- **Data down, events up.** Props flow from parent to child; the child asks for changes by calling a function it was given.
+- **Store the minimum.** The parent stores one value, `openId`, rather than a boolean per item. "At most one open" is then guaranteed by the *shape* of the state: an invalid state cannot be represented.
+
+**How the solution works**
+
+`Accordion` holds `const [openId, setOpenId] = useState(null)`. Each item gets `isOpen={item.id === openId}` and an `onToggle` that sets `openId` to that item's id, or back to `null` if it was already open. `AccordionItem` renders a button with `aria-expanded` and conditionally renders the content with `{isOpen && ...}`.
+
+**What an interviewer is looking for**
+
+That you choose where state lives on purpose, and that you can turn "at most one open" into a state shape instead of into checks scattered through handlers.
+</details>

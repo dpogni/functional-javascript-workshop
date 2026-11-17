@@ -124,7 +124,10 @@ To start an exercise over: `git checkout -- exercises/03-list-state`.
 - **Read the failing test name, not the test file.** The test names are
   written as requirements. Treat `tests/` as the hidden grader, and only open it
   if you're truly stuck.
-- Each brief has a collapsed **Hint**. Try without it first.
+- Each brief ends with three collapsed sections. Open them in this order, and
+  only as far as you need: **Hint** (a nudge), **Topics to read** (links to the
+  relevant pages of the official React docs), **Full explainer** (the concepts
+  behind the problem and how the solution works; spoilers).
 - Your scoreboard is stored in `.progress.json` (git-ignored).
 
 ## Layout

@@ -64,3 +64,44 @@ both in the reducer (to guard `NEXT`/`SUBMIT`) and in the component (to
 disable **Next**). Keep *all* form values in one `values` object in the
 reducer state so unmounting a step's inputs never loses data.
 </details>
+
+<details><summary>Topics to read (official React docs)</summary>
+
+- [Extracting state logic into a reducer](https://react.dev/learn/extracting-state-logic-into-a-reducer)
+- [`useReducer` reference](https://react.dev/reference/react/useReducer)
+- [Choosing the state structure (avoid redundant state)](https://react.dev/learn/choosing-the-state-structure)
+- [Preserving and resetting state](https://react.dev/learn/preserving-and-resetting-state)
+- [Scaling up with reducer and context](https://react.dev/learn/scaling-up-with-reducer-and-context)
+</details>
+
+<details><summary>Full explainer (spoilers)</summary>
+
+**The problem in one line:** a form spread over several screens, where you may only move forward when the current screen is valid and nothing is lost when you move back.
+
+**Model it as a state machine**
+
+There are four situations: step 1, step 2, step 3, submitted. There are a few allowed moves between them, each with a condition:
+
+- `NEXT`: step n → n + 1, only if step n's fields are valid and n < 3.
+- `BACK`: step n → n − 1, only if n > 1.
+- `SUBMIT`: step 3 → submitted, only if everything is valid.
+- `CHANGE`: stays on the same step, updates one field.
+
+A reducer is a natural home for this. Each `case` is one transition and its guard. An illegal move returns the current state unchanged, so the UI cannot reach an invalid step even if a button is wired up wrongly.
+
+**Why going back loses nothing**
+
+All four field values live in one `values` object in the reducer state, above the step components. A step's inputs unmount when you leave it, but they were only ever *displaying* that state. If each step kept its own `useState`, unmounting would destroy it. This is "lifting state up" (exercise 04) applied to a form.
+
+**One validation function, used twice**
+
+`validateStep(step, values)` is called in the reducer, to guard `NEXT` and `SUBMIT`, and in the component, to disable the Next button. The button is a convenience for the user; the reducer is the actual rule. Keeping one function means the two can never disagree.
+
+**How the solution works**
+
+`STEP_FIELDS` maps each step to its field names; a `validators` table maps each field to a predicate. `validateStep` checks every field of a step. The component renders by `step`, with a small `Field` component that dispatches `CHANGE`. The review step shows the values and masks the password. Submitting dispatches `SUBMIT` and calls `onSubmit(values)` from the click handler, because calling a parent callback is a side effect and reducers must stay pure.
+
+**What an interviewer is looking for**
+
+That you design the state shape and the transitions before writing JSX, keep validation in one place, keep side effects out of the reducer, and can say how it would grow: per-field error messages (exercise 23), an async "is this username taken" check, or saving a draft.
+</details>
