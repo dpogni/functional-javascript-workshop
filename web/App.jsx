@@ -4,7 +4,15 @@ import { javascript } from '@codemirror/lang-javascript';
 import { Prec } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { exercises, stages, byId } from './catalog.js';
-import { loadCode, saveCode, clearCode, loadProgress, saveProgress } from './storage.js';
+import {
+  loadCode,
+  saveCode,
+  clearCode,
+  loadProgress,
+  saveProgress,
+  loadRevealed,
+  saveRevealed,
+} from './storage.js';
 import { runTests, createSandboxFrame, connect } from './sandbox.js';
 import { autoImport } from './autoImport.js';
 
@@ -208,6 +216,8 @@ export default function App() {
   const [runs, setRuns] = useState({});
   const [tab, setTab] = useState('tests');
   const [fileTab, setFileTab] = useState('main');
+  // Exercises whose solution has been revealed: their Solution tab stays put.
+  const [revealed, setRevealed] = useState(loadRevealed);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -263,9 +273,19 @@ export default function App() {
     setFileTab('main');
   };
 
+  const solutionRevealed = !!revealed[exercise.id];
   const showSolution = () => {
     if (fileTab === 'solution') return setFileTab('main');
-    if (window.confirm('Peek at the reference solution? Try the hint at the bottom of the brief first.')) {
+    // Only ask the first time; after that the tab is always there.
+    if (
+      solutionRevealed ||
+      window.confirm('Peek at the reference solution? Try the hint at the bottom of the brief first.')
+    ) {
+      if (!solutionRevealed) {
+        const updated = { ...revealed, [exercise.id]: true };
+        setRevealed(updated);
+        saveRevealed(updated);
+      }
       setFileTab('solution');
     }
   };
@@ -289,9 +309,10 @@ export default function App() {
     [run, exercise.helpers]
   );
 
+  const readOnlyExtensions = useMemo(() => [javascript({ jsx: true })], []);
   const helper = exercise.helpers.find((h) => h.name === fileTab);
   const readOnly = fileTab !== 'main';
-  const shown = fileTab === 'main' ? code : fileTab === 'solution' ? exercise.solution : helper?.code ?? '';
+  const shown = fileTab === 'solution' ? exercise.solution : helper?.code ?? '';
 
   return (
     <div className="app">
@@ -313,7 +334,7 @@ export default function App() {
         </div>
         <div className="actions">
           <button onClick={reset}>Reset</button>
-          <button onClick={showSolution}>{fileTab === 'solution' ? 'Hide solution' : 'Solution'}</button>
+          <button onClick={showSolution}>{fileTab === 'solution' ? 'Back to my code' : 'Solution'}</button>
           <button className="primary" onClick={run} disabled={busy}>
             {busy ? 'Running…' : <>▶ Run<span className="wide"> tests</span></>}
           </button>
@@ -335,25 +356,39 @@ export default function App() {
                   {h.name} <small>read-only</small>
                 </button>
               ))}
-              {fileTab === 'solution' && (
-                <button role="tab" aria-selected="true">
+              {solutionRevealed && (
+                <button role="tab" aria-selected={fileTab === 'solution'} onClick={() => setFileTab('solution')}>
                   Solution <small>read-only</small>
                 </button>
               )}
             </div>
-            <div className="editor">
+            {/* Your code stays mounted while another tab is shown, so switching
+                back keeps the cursor, scroll position and undo history. */}
+            <div className="editor" hidden={readOnly}>
               <CodeMirror
-                key={`${exercise.id}:${fileTab}`}
-                value={shown}
+                key={exercise.id}
+                value={code}
                 theme="dark"
                 height="100%"
                 extensions={extensions}
-                readOnly={readOnly}
-                editable={!readOnly}
-                onChange={readOnly ? undefined : setCode}
+                onChange={setCode}
                 basicSetup={{ tabSize: 2 }}
               />
             </div>
+            {readOnly && (
+              <div className="editor">
+                <CodeMirror
+                  key={`${exercise.id}:${fileTab}`}
+                  value={shown}
+                  theme="dark"
+                  height="100%"
+                  extensions={readOnlyExtensions}
+                  readOnly
+                  editable={false}
+                  basicSetup={{ tabSize: 2 }}
+                />
+              </div>
+            )}
           </section>
 
           <section className="pane output-pane">

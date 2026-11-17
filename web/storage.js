@@ -31,3 +31,5 @@ export const saveCode = (id, code) => write(`code:${id}`, code);
 export const clearCode = (id) => remove(`code:${id}`);
 export const loadProgress = () => read('progress', {});
 export const saveProgress = (progress) => write('progress', progress);
+export const loadRevealed = () => read('revealed', {});
+export const saveRevealed = (revealed) => write('revealed', revealed);
