@@ -42,3 +42,35 @@ The dependency array lists every value from the component scope that the
 calculation reads. Leave one out and you get stale results; that's what the
 "new `products`" test catches.
 </details>
+
+<details><summary>Topics to read (official React docs)</summary>
+
+- [`useMemo` reference](https://react.dev/reference/react/useMemo)
+- [You might not need an effect](https://react.dev/learn/you-might-not-need-an-effect)
+- [Keeping components pure](https://react.dev/learn/keeping-components-pure)
+- [Render and commit](https://react.dev/learn/render-and-commit)
+</details>
+
+<details><summary>Full explainer (spoilers)</summary>
+
+**The problem in one line:** a calculation runs on every render, including renders caused by state it does not depend on.
+
+**Key concepts**
+
+- **Any state change re-runs the whole component function.** Ticking "Compact view" changes `compact`, so the function runs again and `slowFilter(products, query)` runs with it, although neither input changed.
+- **`useMemo(fn, deps)` caches a result between renders.** React calls `fn` on the first render, stores the result, and on later renders returns the stored result unless one of `deps` changed (compared with `Object.is`).
+- **Dependencies must be complete.** The list names every reactive value the calculation reads. Leave out `products` and the list keeps showing results for the old array: a stale cache, which is a correctness bug, not a performance one.
+- **It is an optimisation, not a guarantee.** The code must still be correct if React recomputes. So the function has to be pure.
+
+**How the solution works**
+
+One line changes: `const results = useMemo(() => slowFilter(products, query), [products, query])`. Toggling `compact` re-renders, but both dependencies are unchanged, so the cached array is returned.
+
+**Note the reference comparison**
+
+`products` is compared by identity. If a parent built a new array on every render (`products={[...]}` inline), the memo would miss every time. Memoization only helps when the inputs are stable.
+
+**When to bother**
+
+When the calculation is measurably slow, or when the result is passed to a memoized child or used as an effect dependency and so needs a stable identity. For cheap calculations, plain code is clearer. Do not reach for an effect plus state to "cache" a derived value; that is what `useMemo` is for.
+</details>

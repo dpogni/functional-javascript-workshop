@@ -36,7 +36,9 @@ function parse(path, readme) {
     starter: starterFiles[`../exercises/${id}/${file}`],
     solution: solutionFiles[`../solutions/${id}/${file}`],
     helpers,
-    html: marked.parse(body),
+    // Links in a brief point at the React docs: open them in a new tab so the
+    // editor (and the code in it) stays put.
+    html: marked.parse(body).replaceAll('<a href="http', '<a target="_blank" rel="noreferrer" href="http'),
   };
 }
 

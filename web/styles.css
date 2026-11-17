@@ -105,6 +105,8 @@ code, pre { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
 .markdown table { border-collapse: collapse; margin: 10px 0; display: block; overflow-x: auto; }
 .markdown th, .markdown td { border: 1px solid var(--border); padding: 5px 9px; text-align: left; vertical-align: top; }
 .markdown details { margin-top: 20px; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; }
+.markdown details + details { margin-top: 8px; }
+.markdown details[open] > summary { margin-bottom: 8px; }
 .markdown summary { cursor: pointer; color: var(--orange); font-weight: 600; }
 
 /* ---- tabs ---- */

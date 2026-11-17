@@ -158,7 +158,10 @@ components from your `exercises/` files so you can click around.
 - **Read the failing test name, not the test file.** The test names are
   written as requirements. Treat `tests/` as the hidden grader, and only open it
   if you're truly stuck.
-- Each brief has a collapsed **Hint**. Try without it first.
+- Each brief ends with three collapsed sections. Open them in this order, and
+  only as far as you need: **Hint** (a nudge), **Topics to read** (links to the
+  relevant pages of the official React docs), **Full explainer** (the concepts
+  behind the problem and how the solution works; spoilers).
 - The terminal scoreboard is stored in `.progress.json` (git-ignored); the
   browser scoreboard in `localStorage`.
 
