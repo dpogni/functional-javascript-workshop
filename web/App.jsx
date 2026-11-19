@@ -214,7 +214,7 @@ export default function App() {
   const [progress, setProgress] = useState(loadProgress);
   const [codeById, setCodeById] = useState({});
   const [runs, setRuns] = useState({});
-  const [tab, setTab] = useState('tests');
+  const [tab, setTab] = useState('preview');
   const [fileTab, setFileTab] = useState('main');
   // Exercises whose solution has been revealed: their Solution tab stays put.
   const [revealed, setRevealed] = useState(loadRevealed);
@@ -228,6 +228,7 @@ export default function App() {
 
   useEffect(() => {
     setFileTab('main');
+    setTab('preview');
     document.title = `${exercise.number}. ${exercise.title} · React Interview Workshop`;
   }, [exercise]);
 
@@ -393,11 +394,11 @@ export default function App() {
 
           <section className="pane output-pane">
             <div className="tabs" role="tablist">
-              <button role="tab" aria-selected={tab === 'tests'} onClick={() => setTab('tests')}>
-                Test results
-              </button>
               <button role="tab" aria-selected={tab === 'preview'} onClick={() => setTab('preview')}>
                 Preview
+              </button>
+              <button role="tab" aria-selected={tab === 'tests'} onClick={() => setTab('tests')}>
+                Test results
               </button>
             </div>
             <div className="output">
