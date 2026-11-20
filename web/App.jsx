@@ -80,7 +80,7 @@ function Sidebar({ current, progress, open, onClose }) {
           </ul>
         </section>
       ))}
-      <p className="sidebar-note">★ = one of the 10 interview problems. The rest are warm-ups that lead up to them.</p>
+      <p className="sidebar-note">★ = interview problem. The rest are warm-ups that lead up to them.</p>
     </nav>
   );
 }

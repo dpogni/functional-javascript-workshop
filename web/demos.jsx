@@ -1,6 +1,7 @@
 // Live previews: how each exercise is shown in the "Preview" tab.
 // `mod` is the module compiled from the code in the editor.
 import { useState } from 'react';
+import { FILE_TREE, TABLE_COLUMNS, TABLE_ROWS, fakeFetchUser } from '../playground/sampleData.js';
 
 const FAQ = [
   { id: 'a', title: 'What is React?', content: 'A UI library.' },
@@ -182,6 +183,59 @@ export const demos = {
       <div>
         <C onSubmit={setSent} />
         {sent && <Note>onSubmit({JSON.stringify(sent)})</Note>}
+      </div>
+    );
+  },
+
+  '25-star-rating': function Demo({ mod }) {
+    const C = mod.default;
+    const [last, setLast] = useState(null);
+    return (
+      <div>
+        <C onChange={setLast} />
+        <Note>{last === null ? 'onChange not called yet' : `onChange(${last})`}</Note>
+      </div>
+    );
+  },
+
+  '26-file-explorer': component({ tree: FILE_TREE }),
+
+  '27-modal-dialog': function Demo({ mod }) {
+    const Modal = mod.default;
+    const [open, setOpen] = useState(false);
+    return (
+      <div>
+        <button onClick={() => setOpen(true)}>Open settings</button>
+        <Note>The text below should not scroll while the modal is open.</Note>
+        {Array.from({ length: 30 }, (_, i) => (
+          <p key={i}>Page content line {i + 1}</p>
+        ))}
+        <Modal isOpen={open} onClose={() => setOpen(false)} title="Settings">
+          <p>Press Escape, click outside, or use the close button.</p>
+          <label>
+            Nickname <input />
+          </label>
+        </Modal>
+      </div>
+    );
+  },
+
+  '28-data-table': component({ columns: TABLE_COLUMNS, rows: TABLE_ROWS }),
+
+  '29-data-fetching': function Demo({ mod }) {
+    const UserProfile = mod.default;
+    const [userId, setUserId] = useState(1);
+    return (
+      <div>
+        <div>
+          {[1, 2, 3].map((id) => (
+            <button key={id} onClick={() => setUserId(id)} style={{ fontWeight: id === userId ? 700 : 400 }}>
+              User {id}
+            </button>
+          ))}
+        </div>
+        <Note>User 1 takes 2s, user 2 takes 0.4s, user 3 fails every other time. Click 1 then 2 quickly.</Note>
+        <UserProfile userId={userId} fetchUser={fakeFetchUser} />
       </div>
     );
   },

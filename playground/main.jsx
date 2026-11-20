@@ -26,6 +26,46 @@ import OtpInput from '../exercises/21-otp-input/OtpInput.jsx';
 import Cart from '../exercises/22-reducer-basics/Cart.jsx';
 import LoginForm from '../exercises/23-form-validation/LoginForm.jsx';
 import SignupWizard from '../exercises/24-signup-wizard/SignupWizard.jsx';
+import StarRating from '../exercises/25-star-rating/StarRating.jsx';
+import FileExplorer from '../exercises/26-file-explorer/FileExplorer.jsx';
+import Modal from '../exercises/27-modal-dialog/Modal.jsx';
+import DataTable from '../exercises/28-data-table/DataTable.jsx';
+import UserProfile from '../exercises/29-data-fetching/UserProfile.jsx';
+import { FILE_TREE, TABLE_COLUMNS, TABLE_ROWS, fakeFetchUser } from './sampleData.js';
+
+function ModalDemo() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setOpen(true)}>Open settings</button>
+      <Modal isOpen={open} onClose={() => setOpen(false)} title="Settings">
+        <p>Press Escape, click outside, or use the × button to close.</p>
+        <label>
+          Nickname <input />
+        </label>
+      </Modal>
+    </div>
+  );
+}
+
+function FetchDemo() {
+  const [userId, setUserId] = useState(1);
+  return (
+    <div>
+      <p>
+        {[1, 2, 3].map((id) => (
+          <button key={id} onClick={() => setUserId(id)} style={{ fontWeight: id === userId ? 700 : 400 }}>
+            User {id}
+          </button>
+        ))}
+      </p>
+      <p style={{ color: '#666', fontSize: 13 }}>
+        User 1 takes 2s, user 2 takes 0.4s, user 3 fails every other time. Click 1 then 2 quickly.
+      </p>
+      <UserProfile userId={userId} fetchUser={fakeFetchUser} />
+    </div>
+  );
+}
 
 function UserDemo() {
   const [signedIn, setSignedIn] = useState(true);
@@ -162,6 +202,11 @@ const DEMOS = {
   '22 Cart': () => <Cart products={PRODUCTS} />,
   '23 Login form': () => <LoginForm onSubmit={(v) => alert(`Logged in as ${v.email}`)} />,
   '24 Signup wizard': () => <SignupWizard onSubmit={(v) => console.log('submitted', v)} />,
+  '25 Star rating': () => <StarRating onChange={(n) => console.log('rating', n)} />,
+  '26 File explorer': () => <FileExplorer tree={FILE_TREE} />,
+  '27 Modal': ModalDemo,
+  '28 Data table': () => <DataTable columns={TABLE_COLUMNS} rows={TABLE_ROWS} />,
+  '29 Data fetching': FetchDemo,
 };
 
 function App() {
