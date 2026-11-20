@@ -14,5 +14,9 @@ export function wizardReducer(state, action) {
 
 export default function SignupWizard({ onSubmit }) {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
-  return <div>Signup wizard</div>;
+  return (
+    <section>
+      <h1>Signup wizard</h1>
+    </section>
+  );
 }
