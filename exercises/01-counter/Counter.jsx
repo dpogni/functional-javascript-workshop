@@ -1,4 +1,8 @@
 // TODO: implement the counter described in README.md
 export default function Counter({ initialValue = 0 }) {
-  return <div>Counter</div>;
+  return (
+    <section>
+      <h1>Counter</h1>
+    </section>
+  );
 }

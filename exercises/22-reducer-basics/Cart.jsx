@@ -14,5 +14,9 @@ export function cartTotal(state) {
 
 export default function Cart({ products }) {
   const [cart, dispatch] = useReducer(cartReducer, initialCart);
-  return <div>Cart</div>;
+  return (
+    <section>
+      <h1>Cart</h1>
+    </section>
+  );
 }
