@@ -4,9 +4,10 @@ A guided path through the ten problems that keep showing up in React
 live-coding interviews. You write the code in your editor, run one command, and
 get a **PASS / FAIL** grade from an automated test suite.
 
-The ten interview problems are marked ★. Between them are **14 short warm-up
-exercises** that each introduce *one* new idea, so that by the time you reach a
-★ problem you have already used every hook it needs. Every brief starts with a
+The interview problems are marked ★: the original ten, plus five more classics
+in stage 8. Between them are **14 short warm-up exercises** that each introduce
+*one* new idea, so that by the time you reach a ★ problem you have already used
+every hook it needs. Every brief starts with a
 **Builds on / New here** note telling you exactly what the step up is.
 
 If it has been a while since you wrote React, go in order. If you only want the
@@ -71,6 +72,19 @@ feels like too big a jump.
 | 22 | [useReducer basics: shopping cart](exercises/22-reducer-basics/README.md) | Intermediate | `useReducer` | `Cart.jsx` |
 | 23 | [Form validation: login form](exercises/23-form-validation/README.md) | Intermediate | Validation, touched fields & submit | `LoginForm.jsx` |
 | 24 | ★ [Multi-step signup form with useReducer](exercises/24-signup-wizard/README.md) | Advanced | State machines & forms | `SignupWizard.jsx` |
+
+### Stage 8 · Interview classics
+
+Five more problems that come up again and again. Each one combines ideas from
+the earlier stages, so do them after stage 7.
+
+| # | Exercise | Level | New idea | You edit |
+|---|----------|-------|----------|----------|
+| 25 | ★ [Star rating](exercises/25-star-rating/README.md) | Beginner | Hover state & event handlers | `StarRating.jsx` |
+| 26 | ★ [File explorer: a recursive tree](exercises/26-file-explorer/README.md) | Intermediate | Recursive components | `FileExplorer.jsx` |
+| 27 | ★ [Modal dialog](exercises/27-modal-dialog/README.md) | Intermediate | Portals, focus & document events | `Modal.jsx` |
+| 28 | ★ [Data table: sort, filter, paginate](exercises/28-data-table/README.md) | Intermediate | Derived data pipelines | `DataTable.jsx` |
+| 29 | ★ [Data fetching: loading, errors and race conditions](exercises/29-data-fetching/README.md) | Advanced | Async effects & cancellation | `UserProfile.jsx` |
 
 ## Setup
 

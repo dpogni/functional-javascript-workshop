@@ -92,7 +92,7 @@ function progress() {
     const detail = r ? dim(`  ${r.passed}/${r.total} tests`) : '';
     console.log(`  ${icon}  ${ex.slice(0, 2)}  ${title(ex)}${star}${detail}`);
   }
-  console.log(dim('\n  ★ = one of the 10 interview problems; the rest are warm-ups that lead up to them'));
+  console.log(dim('\n  ★ = interview problem; the rest are warm-ups that lead up to them'));
   console.log(`\n  ${bold(`${passed}/${exercises.length} passed`)}`);
   const next = exercises.find((e) => !p[e]?.pass);
   if (next) {
